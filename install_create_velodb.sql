@@ -1,0 +1,125 @@
+-- VeloDB / Apache Doris DDL converted from install_create.sql.
+-- Configure the application with DBNAME=wikialisa_sign and DBTABLEPRE=wa_.
+-- Doris has one key model per table; the secondary UNIQUE constraints from
+-- the MySQL schema (name, salt/key, secret) are not enforced by these tables.
+
+CREATE DATABASE IF NOT EXISTS `wikialisa_sign`;
+USE `wikialisa_sign`;
+
+DROP TABLE IF EXISTS `wa_account`;
+CREATE TABLE `wa_account` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(24) NOT NULL,
+  `pw` CHAR(32) NOT NULL,
+  `ip` VARCHAR(15) NOT NULL,
+  `date` DATETIME NOT NULL
+)
+ENGINE=OLAP
+UNIQUE KEY(`id`)
+DISTRIBUTED BY HASH(`id`) BUCKETS 1;
+
+DROP TABLE IF EXISTS `wa_session`;
+CREATE TABLE `wa_session` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `salt` CHAR(32) NOT NULL,
+  `key` VARCHAR(16) NOT NULL,
+  `val` VARCHAR(32) NOT NULL,
+  `time` BIGINT NOT NULL
+)
+ENGINE=OLAP
+UNIQUE KEY(`id`)
+DISTRIBUTED BY HASH(`id`) BUCKETS 1;
+
+DROP TABLE IF EXISTS `wa_shield`;
+CREATE TABLE `wa_shield` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `ip` VARCHAR(15) NOT NULL,
+  `key` VARCHAR(16) NOT NULL,
+  `val` SMALLINT NOT NULL,
+  `time` BIGINT NOT NULL
+)
+ENGINE=OLAP
+UNIQUE KEY(`id`)
+DISTRIBUTED BY HASH(`id`) BUCKETS 1;
+
+DROP TABLE IF EXISTS `wa_stat`;
+CREATE TABLE `wa_stat` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `ip` VARCHAR(15) NOT NULL,
+  `pv` INT NOT NULL,
+  `date` DATETIME NOT NULL
+)
+ENGINE=OLAP
+UNIQUE KEY(`id`)
+DISTRIBUTED BY HASH(`id`) BUCKETS 1;
+
+DROP TABLE IF EXISTS `wa_member`;
+CREATE TABLE `wa_member` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(32) NOT NULL,
+  `pw` CHAR(32) NOT NULL,
+  `ip` VARCHAR(15) NOT NULL,
+  `nick` VARCHAR(24) NOT NULL,
+  `phone` VARCHAR(11) NOT NULL DEFAULT '',
+  `link` VARCHAR(128) NOT NULL DEFAULT '',
+  `intro` VARCHAR(255) NOT NULL DEFAULT '',
+  `priv_name` SMALLINT NOT NULL DEFAULT '0',
+  `priv_point` SMALLINT NOT NULL DEFAULT '0',
+  `priv_auth` SMALLINT NOT NULL DEFAULT '0',
+  `priv_phone` SMALLINT NOT NULL DEFAULT '0',
+  `notify` INT NOT NULL DEFAULT '0',
+  `point` INT NOT NULL DEFAULT '0',
+  `auth` SMALLINT NOT NULL DEFAULT '0',
+  `lock` SMALLINT NOT NULL DEFAULT '0',
+  `reg` DATETIME NOT NULL,
+  `login` BIGINT NOT NULL DEFAULT '0'
+)
+ENGINE=OLAP
+UNIQUE KEY(`id`)
+DISTRIBUTED BY HASH(`id`) BUCKETS 1;
+
+DROP TABLE IF EXISTS `wa_buy`;
+CREATE TABLE `wa_buy` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `mid` BIGINT NOT NULL DEFAULT '0',
+  `secret` CHAR(32) NOT NULL,
+  `point` INT NOT NULL,
+  `date` DATETIME NOT NULL
+)
+ENGINE=OLAP
+UNIQUE KEY(`id`)
+DISTRIBUTED BY HASH(`id`) BUCKETS 1;
+
+DROP TABLE IF EXISTS `wa_app`;
+CREATE TABLE `wa_app` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `mid` BIGINT NOT NULL,
+  `name` VARCHAR(24) NOT NULL DEFAULT '',
+  `identity` VARCHAR(64) NOT NULL DEFAULT '',
+  `version` VARCHAR(32) NOT NULL DEFAULT '',
+  `minos` VARCHAR(32) NOT NULL DEFAULT '',
+  `type` SMALLINT NOT NULL,
+  `mode` SMALLINT NOT NULL,
+  `aid` BIGINT NOT NULL DEFAULT '0',
+  `icon` VARCHAR(128) NOT NULL,
+  `file` VARCHAR(128) NOT NULL,
+  `down` INT NOT NULL DEFAULT '0',
+  `size` LARGEINT NOT NULL,
+  `date` DATETIME NOT NULL
+)
+ENGINE=OLAP
+UNIQUE KEY(`id`)
+DISTRIBUTED BY HASH(`id`) BUCKETS 1;
+
+DROP TABLE IF EXISTS `wa_hash`;
+CREATE TABLE `wa_hash` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `secret` CHAR(32) NOT NULL,
+  `name` VARCHAR(24) NOT NULL DEFAULT '',
+  `identity` VARCHAR(64) NOT NULL DEFAULT '',
+  `icon` VARCHAR(128) NOT NULL,
+  `file` VARCHAR(128) NOT NULL
+)
+ENGINE=OLAP
+UNIQUE KEY(`id`)
+DISTRIBUTED BY HASH(`id`) BUCKETS 1;

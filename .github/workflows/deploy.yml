@@ -25,9 +25,14 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
+          extensions: pdo_mysql
 
       - name: Validate PHP syntax
         run: git ls-files -z '*.php' | xargs -0 -r -n1 php -l
+
+      - name: Verify MySQL PDO driver
+        run: |
+          php -r 'exit(extension_loaded("pdo_mysql") ? 0 : 1);'
 
       - name: Validate deployment settings
         shell: bash
